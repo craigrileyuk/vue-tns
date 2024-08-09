@@ -26,7 +26,6 @@ import { caf } from "./helpers/caf.js";
 import { extend } from "./helpers/extend.js";
 import { checkStorageValue } from "./helpers/checkStorageValue.js";
 import { setLocalStorage } from "./helpers/setLocalStorage.js";
-import { getSlideId } from "./helpers/getSlideId.js";
 import { calc } from "./helpers/calc.js";
 import { percentageLayout } from "./helpers/percentageLayout.js";
 import { mediaquerySupport } from "./helpers/mediaquerySupport.js";
@@ -385,6 +384,7 @@ export const tns = function (options) {
 
   // fixedWidth: viewport > rightBoundary > indexMax
   var autoWidth = options.autoWidth,
+    slideId = options.slideId,
     fixedWidth = getOption("fixedWidth"),
     edgePadding = getOption("edgePadding"),
     gutter = getOption("gutter"),
@@ -467,7 +467,6 @@ export const tns = function (options) {
     events = new Events(),
     // id, class
     newContainerClasses = " tns-slider tns-" + options.mode,
-    slideId = container.id || getSlideId(),
     disable = getOption("disable"),
     disabled = false,
     freezable = options.freezable,
@@ -1426,22 +1425,11 @@ export const tns = function (options) {
           hiddenStr = navAsThumbnails ? "" : 'style="display:none"';
         for (var i = 0; i < slideCount; i++) {
           // hide nav items by default
-          navHtml +=
-            '<button type="button" data-nav="' +
-            i +
-            '" tabindex="-1" aria-controls="' +
-            slideId +
-            '" ' +
-            hiddenStr +
-            ' aria-label="' +
-            navStr +
-            (i + 1) +
-            '"></button>';
+          navHtml += `<button type="button" data-nav="${i}" tabindex="-1" aria-controls="${slideId}" ${hiddenStr} aria-label="${
+            navStr + (i + 1)
+          }"></button>`;
         }
-        navHtml =
-          '<div class="tns-nav" aria-label="Carousel Pagination">' +
-          navHtml +
-          "</div>";
+        navHtml = `<div class="tns-nav" aria-label="Carousel Pagination">${navHtml}</div>`;
         outerWrapper.insertAdjacentHTML(
           getInsertPosition(options.navPosition),
           navHtml
@@ -1484,7 +1472,7 @@ export const tns = function (options) {
     }
 
     // == controlsInit ==
-    if (hasControls) {
+    /* if (hasControls) {
       if (!controlsContainer && (!prevButton || !nextButton)) {
         outerWrapper.insertAdjacentHTML(
           getInsertPosition(options.controlsPosition),
@@ -1544,7 +1532,7 @@ export const tns = function (options) {
         addEvents(prevButton, controlsEvents);
         addEvents(nextButton, controlsEvents);
       }
-    }
+    } */
 
     // hide tools if needed
     disableUI();

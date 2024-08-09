@@ -4,12 +4,20 @@
       <slot></slot>
     </div>
     <div :class="props.controlsClass">
-      <button :class="props.prevButtonClass" @click="instance.goTo('prev')">
+      <button
+        type="button"
+        :class="props.prevButtonClass"
+        @click="instance.goTo('prev')"
+      >
         <slot name="prev-button">
           <SvgIcon :path="mdiChevronLeft" size="72" />
         </slot>
       </button>
-      <button :class="props.nextButtonClass" @click="instance.goTo('next')">
+      <button
+        type="button"
+        :class="props.nextButtonClass"
+        @click="instance.goTo('next')"
+      >
         <slot name="next-button">
           <SvgIcon :path="mdiChevronRight" size="72" />
         </slot>
@@ -18,12 +26,15 @@
     <nav :class="props.navClass">
       <button
         v-for="n in pages"
+        type="button"
         :class="props.navButtonClass"
         :data-nav="n - 1"
+        :aria-controls="slideId"
         @click="instance.onNavClick"
       >
         <slot name="nav-button" :is-active="navCurrentIndex == n - 1">
           <SvgIcon
+            :size="props.navButtonSize"
             :path="
               navCurrentIndex == n - 1 ? mdiCircleSlice8 : mdiCircleOutline
             "
@@ -44,6 +55,7 @@ import {
 } from "@mdi/js";
 import { onMounted, ref, computed, onUnmounted, useSlots, nextTick } from "vue";
 import { tns } from "./tns/index";
+import { getSlideId } from "./tns/helpers/getSlideId";
 import { useResponsiveConfig } from "./composables/useResponsiveConfig";
 
 const props = defineProps({
@@ -158,7 +170,11 @@ const props = defineProps({
   },
   navButtonClass: {
     type: String,
-    default: "",
+    default: "vue-tns-slider__nav-button",
+  },
+  navButtonSize: {
+    type: Number,
+    default: 24,
   },
 });
 
@@ -171,8 +187,7 @@ const slideCount = computed(() => {
   else return 0;
 });
 const instance = ref({});
-const prevButtonRef = ref(null);
-const nextButtonRef = ref(null);
+const slideId = getSlideId();
 
 const responsive = useResponsiveConfig(props);
 
@@ -180,6 +195,7 @@ onMounted(async () => {
   if (instance.value?.rebuild) return instance.value.rebuild();
 
   instance.value = tns({
+    slideId,
     container: ".vue-tns-slider",
     navContainer: false,
     axis: props.direction,
@@ -275,6 +291,30 @@ defineExpose({
     display: flex;
     justify-content: center;
     column-gap: 4px;
+  }
+  &__nav-button {
+    position: relative;
+
+    &::before {
+      position: absolute;
+      content: "";
+      top: -4px;
+      bottom: -4px;
+      left: -4px;
+      right: -4px;
+      border-radius: 50%;
+      overflow: hidden;
+      opacity: 0;
+      background: currentColor;
+      transition: opacity 300ms ease-in-out;
+    }
+
+    &:hover::before {
+      opacity: 0.12;
+    }
+    &:active::before {
+      opacity: 0.2;
+    }
   }
 }
 </style>

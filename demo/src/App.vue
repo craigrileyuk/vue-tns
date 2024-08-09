@@ -10,6 +10,7 @@
       <VueTns
         ref="tnsRef"
         pause-on-hover
+        centre
         :responsive="{
           xl: {
             items: 2,
