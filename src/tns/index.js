@@ -1,3 +1,7 @@
+/**
+ * @typedef { number | 'next' | 'prev' | 'first' | 'last' } NavigationTarget
+ */
+
 // Object.keys
 if (!Object.keys) {
 	Object.keys = function (object) {
@@ -2449,15 +2453,18 @@ export const tns = function (options) {
 		});
 	}
 
-	// gallery: update slide position
+	/**
+	 * Gallery: update slide position
+	 */
 	function updateGallerySlidePositions() {
-		var l = index + Math.min(slideCount, items);
-		for (var i = slideCountNew; i--; ) {
-			var item = slideItems[i];
+		const l = index + Math.min(slideCount, items);
+		for (let i = slideCountNew; i--; ) {
+			const item = slideItems[i];
 
 			if (i >= index && i < l) {
 				// add transitions to visible slides when adjusting their positions
 				addClass(item, "tns-moving");
+				console.log("Moving....");
 
 				item.style.left = ((i - index) * 100) / items + "%";
 				addClass(item, animateIn);
@@ -2707,12 +2714,17 @@ export const tns = function (options) {
 					removeEvents(slideItems[indexCached], eve);
 					addEvents(slideItems[index], eve);
 
+					console.log("Animate slide 1");
 					animateSlide(indexCached, animateIn, animateOut, true);
+					console.log("Animate slide 2");
+
 					animateSlide(index, animateNormal, animateIn);
 
 					// run fallback function manually
 					// when transition or animation not supported / duration is 0
 					if (!TRANSITIONEND || !ANIMATIONEND || !speed || !isVisible(container)) {
+						console.log("Animate slide transition end");
+
 						onTransitionEnd();
 					}
 				};
@@ -2815,7 +2827,11 @@ export const tns = function (options) {
 		}
 	}
 
-	// # ACTIONS
+	/**
+	 * Main navigation function
+	 * @param { NavigationTarget } targetIndex The index of the first slide to navigate to
+	 * @param { Event } e The click event
+	 */
 	function goTo(targetIndex, e) {
 		if (freeze) {
 			return;
@@ -2824,13 +2840,13 @@ export const tns = function (options) {
 		// prev slideBy
 		if (targetIndex === "prev") {
 			onControlsClick(e, -1);
-
-			// next slideBy
-		} else if (targetIndex === "next") {
+		}
+		// next slideBy
+		else if (targetIndex === "next") {
 			onControlsClick(e, 1);
-
-			// go to exact slide
-		} else {
+		}
+		// go to exact slide
+		else {
 			if (running) {
 				if (preventActionWhenRunning) {
 					return;
@@ -2839,7 +2855,7 @@ export const tns = function (options) {
 				}
 			}
 
-			var absIndex = getAbsIndex(),
+			let absIndex = getAbsIndex(),
 				indexGap = 0;
 
 			if (targetIndex === "first") {
@@ -2887,7 +2903,12 @@ export const tns = function (options) {
 		}
 	}
 
-	// on controls click
+	/**
+	 * On controls click
+	 * @param { Event } e The click event
+	 * @param { number } dir The number of slides to navigate
+	 * @returns { void }
+	 */
 	function onControlsClick(e, dir) {
 		if (running) {
 			if (preventActionWhenRunning) {
@@ -2896,17 +2917,17 @@ export const tns = function (options) {
 				onTransitionEnd();
 			}
 		}
-		var passEventObject;
+		let passEventObject;
 
 		if (!dir) {
 			e = getEvent(e);
-			var target = getTarget(e);
+			let target = getTarget(e);
 
 			while (target !== controlsContainer && [prevButton, nextButton].indexOf(target) < 0) {
 				target = target.parentNode;
 			}
 
-			var targetIn = [prevButton, nextButton].indexOf(target);
+			const targetIn = [prevButton, nextButton].indexOf(target);
 			if (targetIn >= 0) {
 				passEventObject = true;
 				dir = targetIn === 0 ? -1 : 1;

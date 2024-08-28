@@ -5,12 +5,12 @@
 		</div>
 		<template v-if="instance">
 			<div :class="props.controlsClass">
-				<button type="button" :class="props.prevButtonClass" @click="instance.goTo('prev')">
+				<button type="button" :class="props.prevButtonClass" @click="instance.goTo('prev', $event)">
 					<slot name="prev-button">
 						<SvgIcon :path="mdiChevronLeft" size="72" />
 					</slot>
 				</button>
-				<button type="button" :class="props.nextButtonClass" @click="instance.goTo('next')">
+				<button type="button" :class="props.nextButtonClass" @click="instance.goTo('next', $event)">
 					<slot name="next-button">
 						<SvgIcon :path="mdiChevronRight" size="72" />
 					</slot>
